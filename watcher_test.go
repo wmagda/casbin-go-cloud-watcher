@@ -7,13 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/casbin/casbin"
+	_ "github.com/bartventer/casbin-go-cloud-watcher/drivers/mempubsub"
+	_ "github.com/bartventer/casbin-go-cloud-watcher/drivers/natspubsub"
+	"github.com/casbin/casbin/v2"
 	gnatsd "github.com/nats-io/nats-server/v2/test"
 	"github.com/nats-io/nats.go"
-
-	// Enable inmemory and NATS drivers
-	_ "github.com/rusenask/casbin-go-cloud-watcher/drivers/mempubsub"
-	_ "github.com/rusenask/casbin-go-cloud-watcher/drivers/natspubsub"
 )
 
 func TestNATSWatcher(t *testing.T) {
@@ -73,18 +71,15 @@ func TestNATSWatcher(t *testing.T) {
 		case res := <-listenerCh:
 			if res != "listener" {
 				t.Fatalf("Message from unknown source: %v", res)
-				break
 			}
 			listenerReceived = true
 		case res := <-updaterCh:
 			if res != "updater" {
 				t.Fatalf("Message from unknown source: %v", res)
-				break
 			}
 			updaterReceived = true
 		case <-time.After(time.Second * 10):
 			t.Fatal("Updater or listener didn't received message in time")
-			break
 		}
 		if updaterReceived && listenerReceived {
 			close(listenerCh)
@@ -117,7 +112,7 @@ func TestWithEnforcerNATS(t *testing.T) {
 	defer w.Close()
 
 	// Initialize the enforcer.
-	e := casbin.NewEnforcer("./test_data/model.conf", "./test_data/policy.csv")
+	e, _ := casbin.NewEnforcer("./test_data/model.conf", "./test_data/policy.csv")
 
 	// Set the watcher for the enforcer.
 	e.SetWatcher(w)
@@ -160,7 +155,7 @@ func TestWithEnforcerMemory(t *testing.T) {
 	defer w.Close()
 
 	// Initialize the enforcer.
-	e := casbin.NewEnforcer("./test_data/model.conf", "./test_data/policy.csv")
+	e, _ := casbin.NewEnforcer("./test_data/model.conf", "./test_data/policy.csv")
 
 	// Set the watcher for the enforcer.
 	e.SetWatcher(w)
@@ -190,6 +185,7 @@ func TestWithEnforcerMemory(t *testing.T) {
 // Ensure that we can still use the same topic name
 func TestWithEnforcerMemoryB(t *testing.T) {
 
+	// endpointURL := "mem://topicA"
 	endpointURL := "mem://topicA"
 
 	cannel := make(chan string, 1)
@@ -204,7 +200,7 @@ func TestWithEnforcerMemoryB(t *testing.T) {
 	defer w.Close()
 
 	// Initialize the enforcer.
-	e := casbin.NewEnforcer("./test_data/model.conf", "./test_data/policy.csv")
+	e, _ := casbin.NewEnforcer("./test_data/model.conf", "./test_data/policy.csv")
 
 	// Set the watcher for the enforcer.
 	e.SetWatcher(w)
@@ -229,4 +225,260 @@ func TestWithEnforcerMemoryB(t *testing.T) {
 		t.Fatal("The enforcer didn't send message in time")
 	}
 	close(cannel)
+}
+
+func initWithOption(t *testing.T, opt Option) (*Watcher, *casbin.Enforcer) {
+	w, err := NewWithOption(context.Background(), "mem://topicA", opt)
+	if err != nil {
+		t.Fatalf("failed to new watcher: %v", err)
+	}
+
+	// create enforcer.
+	e, err := casbin.NewEnforcer("test_data/model.conf", "test_data/policy.csv")
+	if err != nil {
+		t.Fatalf("failed to new enforcer: %v", err)
+	}
+
+	return w, e
+}
+
+func TestWatcherAddPolicy(t *testing.T) {
+	w, e := initWithOption(t, Option{
+		LocalID: "local-id",
+	})
+
+	if err := e.SetWatcher(w); err != nil {
+		t.Fatalf("failed to set watcher: %v", err)
+	}
+
+	recv := ""
+	if err := w.SetUpdateCallback(func(s string) {
+		recv = s
+	}); err != nil {
+		t.Fatalf("failed to set update callback: %v", err)
+	}
+
+	if _, err := e.AddPolicy("alice", "data2", "read"); err != nil {
+		t.Fatalf("failed to update: %v", err)
+	}
+
+	time.Sleep(time.Millisecond * 300)
+	w.Close()
+
+	if recv != `{"method":"UpdateForAddPolicy","id":"local-id","sec":"p","ptype":"p","new_rules":[["alice","data2","read"]]}` {
+		t.Fatalf("unexpected msg: %s", recv)
+	}
+}
+
+func TestWatcherRemovePolicy(t *testing.T) {
+	w, e := initWithOption(t, Option{
+		LocalID: "local-id",
+	})
+
+	if err := e.SetWatcher(w); err != nil {
+		t.Fatalf("failed to set watcher: %v", err)
+	}
+
+	recv := ""
+	if err := w.SetUpdateCallback(func(s string) {
+		recv = s
+	}); err != nil {
+		t.Fatalf("failed to set update callback: %v", err)
+	}
+
+	if _, err := e.RemovePolicy("alice", "data1", "read"); err != nil {
+		t.Fatalf("failed to update: %v", err)
+	}
+
+	time.Sleep(time.Millisecond * 300)
+	w.Close()
+
+	if recv != `{"method":"UpdateForRemovePolicy","id":"local-id","sec":"p","ptype":"p","new_rules":[["alice","data1","read"]]}` {
+		t.Fatalf("unexpected msg: %s", recv)
+	}
+}
+
+func TestWatcherSavePolicy(t *testing.T) {
+	w, e := initWithOption(t, Option{
+		LocalID: "local-id",
+	})
+
+	if err := e.SetWatcher(w); err != nil {
+		t.Fatalf("failed to set watcher: %v", err)
+	}
+
+	recv := ""
+	if err := w.SetUpdateCallback(func(s string) {
+		recv = s
+	}); err != nil {
+		t.Fatalf("failed to set update callback: %v", err)
+	}
+
+	if err := e.SavePolicy(); err != nil {
+		t.Fatalf("failed to update: %v", err)
+	}
+
+	time.Sleep(time.Millisecond * 300)
+	w.Close()
+
+	if recv != `{"method":"UpdateForSavePolicy","id":"local-id"}` {
+		t.Fatalf("unexpected msg: %s", recv)
+	}
+}
+
+func TestWatcherAddPolicies(t *testing.T) {
+	w, e := initWithOption(t, Option{
+		LocalID: "local-id",
+	})
+
+	if err := e.SetWatcher(w); err != nil {
+		t.Fatalf("failed to set watcher: %v", err)
+	}
+
+	recv := ""
+	if err := w.SetUpdateCallback(func(s string) {
+		recv = s
+	}); err != nil {
+		t.Fatalf("failed to set update callback: %v", err)
+	}
+
+	if _, err := e.AddPolicies([][]string{
+		{"alice", "data2", "read"},
+		{"alice", "data3", "read"},
+	}); err != nil {
+		t.Fatalf("failed to update: %v", err)
+	}
+
+	time.Sleep(time.Millisecond * 300)
+	w.Close()
+
+	if recv != `{"method":"UpdateForAddPolicies","id":"local-id","sec":"p","ptype":"p","new_rules":[["alice","data2","read"],["alice","data3","read"]]}` {
+		t.Fatalf("unexpected msg: %s", recv)
+	}
+}
+
+func TestWatcherRemovePolicies(t *testing.T) {
+	w, e := initWithOption(t, Option{
+		LocalID: "local-id",
+	})
+
+	if err := e.SetWatcher(w); err != nil {
+		t.Fatalf("failed to set watcher: %v", err)
+	}
+
+	recv := ""
+	if err := w.SetUpdateCallback(func(s string) {
+		recv = s
+	}); err != nil {
+		t.Fatalf("failed to set update callback: %v", err)
+	}
+
+	if _, err := e.RemovePolicies([][]string{
+		{"alice", "data1", "read"},
+		{"bob", "data2", "write"},
+	}); err != nil {
+		t.Fatalf("failed to update: %v", err)
+	}
+
+	time.Sleep(time.Millisecond * 300)
+	w.Close()
+
+	if recv != `{"method":"UpdateForRemovePolicies","id":"local-id","sec":"p","ptype":"p","new_rules":[["alice","data1","read"],["bob","data2","write"]]}` {
+		t.Fatalf("unexpected msg: %s", recv)
+	}
+}
+
+func TestWatcherUpdatePolicy(t *testing.T) {
+	w, e := initWithOption(t, Option{
+		LocalID: "local-id",
+	})
+
+	if err := e.SetWatcher(w); err != nil {
+		t.Fatalf("failed to set watcher: %v", err)
+	}
+
+	recv := ""
+	if err := w.SetUpdateCallback(func(s string) {
+		recv = s
+	}); err != nil {
+		t.Fatalf("failed to set update callback: %v", err)
+	}
+
+	if _, err := e.UpdatePolicy(
+		[]string{"alice", "data1", "read"},
+		[]string{"alice", "data1", "write"},
+	); err != nil {
+		t.Fatalf("failed to update: %v", err)
+	}
+
+	time.Sleep(time.Millisecond * 300)
+	w.Close()
+
+	if recv != `{"method":"UpdateForUpdatePolicy","id":"local-id","sec":"p","ptype":"p","old_rules":[["alice","data1","read"]],"new_rules":[["alice","data1","write"]]}` {
+		t.Fatalf("unexpected msg: %s", recv)
+	}
+}
+
+func TestWatcherUpdatePolicies(t *testing.T) {
+	w, e := initWithOption(t, Option{
+		LocalID: "local-id",
+	})
+
+	if err := e.SetWatcher(w); err != nil {
+		t.Fatalf("failed to set watcher: %v", err)
+	}
+
+	recv := ""
+	if err := w.SetUpdateCallback(func(s string) {
+		recv = s
+	}); err != nil {
+		t.Fatalf("failed to set update callback: %v", err)
+	}
+
+	if _, err := e.UpdatePolicies(
+		[][]string{{"alice", "data1", "read"}},
+		[][]string{{"alice", "data1", "write"}},
+	); err != nil {
+		t.Fatalf("failed to update: %v", err)
+	}
+
+	time.Sleep(time.Millisecond * 300)
+	w.Close()
+
+	if recv != `{"method":"UpdateForUpdatePolicies","id":"local-id","sec":"p","ptype":"p","old_rules":[["alice","data1","read"]],"new_rules":[["alice","data1","write"]]}` {
+		t.Fatalf("unexpected msg: %s", recv)
+	}
+}
+
+func TestWatcherWithDefaultCallback(t *testing.T) {
+	w1, e1 := initWithOption(t, Option{})
+	w2, e2 := initWithOption(t, Option{})
+
+	if err := e1.SetWatcher(w1); err != nil {
+		t.Fatalf("failed to set watcher1: %v", err)
+	}
+	if err := e2.SetWatcher(w2); err != nil {
+		t.Fatalf("failed to set watcher2: %v", err)
+	}
+
+	if err := w1.SetUpdateCallback(DefaultCallback(e1)); err != nil {
+		t.Fatalf("failed to set update callback1: %v", err)
+	}
+	if err := w2.SetUpdateCallback(DefaultCallback(e2)); err != nil {
+		t.Fatalf("failed to set update callback2: %v", err)
+	}
+
+	if _, err := e1.AddPolicy("foo", "data1", "read"); err != nil {
+		t.Fatalf("failed to update: %v", err)
+	}
+
+	time.Sleep(time.Millisecond * 300)
+	w1.Close()
+	w2.Close()
+
+	policies := e1.GetFilteredPolicy(0, "foo")
+	if len(policies) == 1 && policies[0][0] == "foo" && policies[0][1] == "data1" && policies[0][2] == "read" {
+		return
+	}
+	t.Fatalf("unexpected policy: %+v", policies)
 }
