@@ -1,11 +1,15 @@
-# Casbin Go Cloud Development kit based watcher
+# Casbin Go Cloud Development kit based WatcherEX
+[![Go Reference](https://pkg.go.dev/badge/github.com/bartventer/casbin-go-cloud-watcher.svg)](https://pkg.go.dev/github.com/bartventer/casbin-go-cloud-watcher)
+[![Go Report Card](https://goreportcard.com/badge/github.com/bartventer/casbin-go-cloud-watcher)](https://goreportcard.com/report/github.com/bartventer/casbin-go-cloud-watcher)
+[![Build](https://github.com/bartventer/casbin-go-cloud-watcher/actions/workflows/go.yml/badge.svg)](https://github.com/bartventer/casbin-go-cloud-watcher/actions/workflows/go.yml)
+[![Release](https://img.shields.io/github/release/bartventer/casbin-go-cloud-watcher.svg)](https://github.com/bartventer/casbin-go-cloud-watcher/releases/latest)
 
-[Casbin](https://github.com/casbin/casbin) watcher built on top of [gocloud.dev](https://gocloud.dev/).
+[Casbin](https://github.com/casbin/casbin) WatcherEX built on top of [gocloud.dev](https://gocloud.dev/).
 
 ## Installation
 
 ```
-go get github.com/rusenask/casbin-go-cloud-watcher
+go get github.com/bartventer/casbin-go-cloud-watcher
 ```
 
 ## Usage
@@ -28,11 +32,11 @@ You can view provider configuration examples here: https://github.com/google/go-
 
 ```go
 import (
-    cloudwatcher "github.com/rusenask/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
     // Enable NATS driver
-    _ "github.com/rusenask/casbin-go-cloud-watcher/drivers/natspubsub"
+    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/natspubsub"
     
-    "github.com/casbin/casbin"
+    "github.com/casbin/casbin/v2"
 )
 
 func main() {
@@ -56,11 +60,11 @@ func main() {
 
 ```go
 import (
-    cloudwatcher "github.com/rusenask/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
     // Enable in-memory driver
-    _ "github.com/rusenask/casbin-go-cloud-watcher/drivers/mempubsub"
+    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/mempubsub"
     
-    "github.com/casbin/casbin"
+    "github.com/casbin/casbin/v2"
 )
 
 func main() {
@@ -83,11 +87,11 @@ URLs are `gcppubsub://projects/myproject/topics/mytopic`. The URLs use the proje
 
 ```go
 import (
-    cloudwatcher "github.com/rusenask/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
     // Enable in GCP pubsub driver
-    _ "github.com/rusenask/casbin-go-cloud-watcher/drivers/gcppubsub"
+    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/gcppubsub"
 
-    "github.com/casbin/casbin"
+    "github.com/casbin/casbin/v2"
 )
 
 func main() {
@@ -113,12 +117,12 @@ Watcher will create a default AWS Session with the *SharedConfigEnable* option e
 
 ```go
 import (
-    cloudwatcher "github.com/rusenask/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
     // Enable AWS SQS & SNS driver
-    _ "github.com/rusenask/casbin-go-cloud-watcher/drivers/awssnssqs"
+    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/awssnssqs"
 
 
-    "github.com/casbin/casbin"
+    "github.com/casbin/casbin/v2"
 )
 
 func main() {
@@ -145,10 +149,10 @@ Watcher can publish to an [Amazon Simple Queue Service](https://aws.amazon.com/s
 
 ```go
 import (
-    cloudwatcher "github.com/rusenask/casbin-go-cloud-watcher"/
+    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"/
     // Enable AWS SQS & SNS driver
-    _ "github.com/rusenask/casbin-go-cloud-watcher/drivers/awssnssqs"
-    "github.com/casbin/casbin"
+    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/awssnssqs"
+    "github.com/casbin/casbin/v2"
 )
 
 func main() {
@@ -174,11 +178,11 @@ Watcher can publish to an [Azure Service Bus](https://azure.microsoft.com/en-us/
 
 ```go
 import (
-    cloudwatcher "github.com/rusenask/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
     // Enable Azure Service Bus driver
-    _ "github.com/rusenask/casbin-go-cloud-watcher/drivers/azuresb"
+    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/azuresb"
 
-    "github.com/casbin/casbin"
+    "github.com/casbin/casbin/v2"
 )
 
 func main() {
@@ -206,11 +210,11 @@ Watcher can publish to a [Kafka](https://kafka.apache.org/) cluster. A Kafka URL
 
 ```go
 import (
-    cloudwatcher "github.com/rusenask/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
     // Enable Kafka driver
-    _ "github.com/rusenask/casbin-go-cloud-watcher/drivers/kafkapubsub"
+    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/kafkapubsub"
 
-    "github.com/casbin/casbin"
+    "github.com/casbin/casbin/v2"
 )
 
 func main() {
@@ -237,3 +241,11 @@ func main() {
 Portable Cloud APIs in Go. Strives to implement these APIs for the leading Cloud providers: AWS, GCP and Azure, as well as provide a local (on-prem) implementation such as Kafka, NATS, etc.
 
 Using the Go CDK you can write your application code once using these idiomatic APIs, test locally using the local versions, and then deploy to a cloud provider with only minimal setup-time changes.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgement
+
+This project is based of a fork of [casbin-go-cloud-watcher](https://github.com/rusenask/casbin-go-cloud-watcher) by [rusenask](https://github.com/rusenask).
