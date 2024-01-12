@@ -38,6 +38,10 @@ jobs:
     - name: Test
       run: go test -v
 
+    - uses: shogo82148/actions-goveralls@v1
+      with:
+        path-to-profile: ./profile.cov
+
   semantic-release:
     needs: [build]
     runs-on: ubuntu-latest
