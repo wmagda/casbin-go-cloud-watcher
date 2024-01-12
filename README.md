@@ -1,6 +1,7 @@
 # Casbin Go Cloud Development kit based WatcherEX
 [![Go Reference](https://pkg.go.dev/badge/github.com/bartventer/casbin-go-cloud-watcher.svg)](https://pkg.go.dev/github.com/bartventer/casbin-go-cloud-watcher)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bartventer/casbin-go-cloud-watcher)](https://goreportcard.com/report/github.com/bartventer/casbin-go-cloud-watcher)
+[![Coverage Status](https://coveralls.io/repos/github/bartventer/casbin-go-cloud-watcher/badge.svg?branch=master)](https://coveralls.io/github/bartventer/casbin-go-cloud-watcher?branch=master)
 [![Build](https://github.com/bartventer/casbin-go-cloud-watcher/actions/workflows/go.yml/badge.svg)](https://github.com/bartventer/casbin-go-cloud-watcher/actions/workflows/go.yml)
 [![Release](https://img.shields.io/github/release/bartventer/casbin-go-cloud-watcher.svg)](https://github.com/bartventer/casbin-go-cloud-watcher/releases/latest)
 
