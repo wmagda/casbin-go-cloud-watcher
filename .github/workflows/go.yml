@@ -36,7 +36,7 @@ jobs:
         fi
 
     - name: Test
-      run: go test -v
+      run: go test -v -coverprofile=./profile.cov ./...
 
     - uses: shogo82148/actions-goveralls@v1
       with:
