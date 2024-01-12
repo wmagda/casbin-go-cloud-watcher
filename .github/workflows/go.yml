@@ -19,13 +19,13 @@ jobs:
     steps:
 
     - name: Set up Go 1.21
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v5
       with:
         go-version: 1.21
       id: go
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Get dependencies
       run: |
@@ -35,8 +35,21 @@ jobs:
             dep ensure
         fi
 
-    - name: Build
-      run: go build -v .
-    
     - name: Test
       run: go test -v
+
+  semantic-release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions: 
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run semantic-release
+        if: github.repository == 'bartventer/casbin-go-cloud-watcher' && github.event_name == 'push'
+        run: |
+          yarn global add semantic-release@17
+          semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
