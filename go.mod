@@ -3,7 +3,7 @@ module github.com/bartventer/casbin-go-cloud-watcher
 go 1.21
 
 require (
-	github.com/casbin/casbin/v2 v2.79.0
+	github.com/casbin/casbin/v2 v2.87.1
 	github.com/google/uuid v1.6.0
 	github.com/nats-io/nats-server/v2 v2.10.6
 	github.com/nats-io/nats.go v1.33.1
