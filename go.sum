@@ -206,8 +206,8 @@ github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c/go.mod h1:7rwL4CYBLnjL
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
-github.com/rabbitmq/amqp091-go v1.8.1 h1:RejT1SBUim5doqcL6s7iN6SBmsQqyTgXb1xMlH0h1hA=
-github.com/rabbitmq/amqp091-go v1.8.1/go.mod h1:+jPrT9iY2eLjRaMSRHUhc3z14E/l85kv/f+6luSD3pc=
+github.com/rabbitmq/amqp091-go v1.9.0 h1:qrQtyzB4H8BQgEuJwhmVQqVHB9O4+MNDJCCAcpc3Aoo=
+github.com/rabbitmq/amqp091-go v1.9.0/go.mod h1:+jPrT9iY2eLjRaMSRHUhc3z14E/l85kv/f+6luSD3pc=
 github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 h1:N/ElC8H3+5XpJzTSTfLsJV/mx9Q9g7kxmchpfZyxgzM=
 github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
@@ -244,8 +244,8 @@ gocloud.dev/pubsub/kafkapubsub v0.37.0 h1:rH122Q2COVNhAGRyid/FHY164LAZhss9V5DiIK
 gocloud.dev/pubsub/kafkapubsub v0.37.0/go.mod h1:y0a+Rv5JvNuVyv1qGic2m1bDoy0ZArWLqcxm/1WxuB8=
 gocloud.dev/pubsub/natspubsub v0.37.0 h1:pnszLOYtyOkwB8oqiwYA11OcJpZ0MGJYBhnKl8c3tCs=
 gocloud.dev/pubsub/natspubsub v0.37.0/go.mod h1:EN6ORFOviXxR/KALVQjTNh34EUcYQzMke6BCC6Czb8g=
-gocloud.dev/pubsub/rabbitpubsub v0.34.0 h1:JvgO79IoX59RHonnRJjp92Oo5ecjRX6O4t1jy38cO3I=
-gocloud.dev/pubsub/rabbitpubsub v0.34.0/go.mod h1:IaipzdqxYtjd+SRK6yGXRzovNaokMAfqq7VJHozTZD8=
+gocloud.dev/pubsub/rabbitpubsub v0.37.0 h1:vNmxM7C+6O6WbErN0TBB8NtrrUFHq3OS0yfokGVsJhQ=
+gocloud.dev/pubsub/rabbitpubsub v0.37.0/go.mod h1:f3FInA6G/zOhFoTPLZKca1CH3WknrJEd0Nlryl2C6fw=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
