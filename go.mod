@@ -6,7 +6,7 @@ require (
 	github.com/casbin/casbin/v2 v2.87.1
 	github.com/google/uuid v1.6.0
 	github.com/nats-io/nats-server/v2 v2.10.12
-	github.com/nats-io/nats.go v1.33.1
+	github.com/nats-io/nats.go v1.34.1
 	gocloud.dev v0.37.0
 	gocloud.dev/pubsub/kafkapubsub v0.37.0
 	gocloud.dev/pubsub/natspubsub v0.37.0
