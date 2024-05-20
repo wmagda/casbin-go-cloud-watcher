@@ -3,7 +3,6 @@ package watcher
 import (
 	"context"
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
@@ -29,7 +28,7 @@ func TestNATSWatcher(t *testing.T) {
 	defer cancel()
 
 	// gocloud.dev connects to NATS server based on env variable
-	os.Setenv("NATS_SERVER_URL", natsEndpoint)
+	t.Setenv("NATS_SERVER_URL", natsEndpoint)
 
 	// updater represents the Casbin enforcer instance that changes the policy in DB
 	// Use the endpoint of nats as parameter.
@@ -103,7 +102,7 @@ func TestWithEnforcerNATS(t *testing.T) {
 	defer cancel()
 
 	// gocloud.dev connects to NATS server based on env variable
-	os.Setenv("NATS_SERVER_URL", natsEndpoint)
+	t.Setenv("NATS_SERVER_URL", natsEndpoint)
 
 	w, err := New(ctx, natsSubject)
 	if err != nil {
@@ -112,7 +111,7 @@ func TestWithEnforcerNATS(t *testing.T) {
 	defer w.Close()
 
 	// Initialize the enforcer.
-	e, _ := casbin.NewEnforcer("./test_data/model.conf", "./test_data/policy.csv")
+	e, _ := casbin.NewEnforcer("./testdata/model.conf", "./testdata/policy.csv")
 
 	// Set the watcher for the enforcer.
 	e.SetWatcher(w)
@@ -140,7 +139,6 @@ func TestWithEnforcerNATS(t *testing.T) {
 }
 
 func TestWithEnforcerMemory(t *testing.T) {
-
 	endpointURL := "mem://topicA"
 
 	cannel := make(chan string, 1)
@@ -155,7 +153,7 @@ func TestWithEnforcerMemory(t *testing.T) {
 	defer w.Close()
 
 	// Initialize the enforcer.
-	e, _ := casbin.NewEnforcer("./test_data/model.conf", "./test_data/policy.csv")
+	e, _ := casbin.NewEnforcer("./testdata/model.conf", "./testdata/policy.csv")
 
 	// Set the watcher for the enforcer.
 	e.SetWatcher(w)
@@ -182,9 +180,8 @@ func TestWithEnforcerMemory(t *testing.T) {
 	close(cannel)
 }
 
-// Ensure that we can still use the same topic name
+// Ensure that we can still use the same topic name.
 func TestWithEnforcerMemoryB(t *testing.T) {
-
 	// endpointURL := "mem://topicA"
 	endpointURL := "mem://topicA"
 
@@ -200,7 +197,7 @@ func TestWithEnforcerMemoryB(t *testing.T) {
 	defer w.Close()
 
 	// Initialize the enforcer.
-	e, _ := casbin.NewEnforcer("./test_data/model.conf", "./test_data/policy.csv")
+	e, _ := casbin.NewEnforcer("./testdata/model.conf", "./testdata/policy.csv")
 
 	// Set the watcher for the enforcer.
 	e.SetWatcher(w)
@@ -234,7 +231,7 @@ func initWithOption(t *testing.T, opt Option) (*Watcher, *casbin.Enforcer) {
 	}
 
 	// create enforcer.
-	e, err := casbin.NewEnforcer("test_data/model.conf", "test_data/policy.csv")
+	e, err := casbin.NewEnforcer("testdata/model.conf", "testdata/policy.csv")
 	if err != nil {
 		t.Fatalf("failed to new enforcer: %v", err)
 	}

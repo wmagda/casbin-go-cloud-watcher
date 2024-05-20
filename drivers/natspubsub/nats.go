@@ -1,6 +1,6 @@
 package natspubsub
 
 import (
-	// Enable NATS driver
+	// Enable NATS driver.
 	_ "gocloud.dev/pubsub/natspubsub"
 )

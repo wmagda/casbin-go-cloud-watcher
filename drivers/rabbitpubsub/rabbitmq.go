@@ -1,6 +1,6 @@
 package rabbitpubsub
 
 import (
-	// Enable RabbitMQ driver
+	// Enable RabbitMQ driver.
 	_ "gocloud.dev/pubsub/rabbitpubsub"
 )

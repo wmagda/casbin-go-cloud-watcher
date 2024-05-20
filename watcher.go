@@ -16,16 +16,16 @@ import (
 	"gocloud.dev/pubsub"
 )
 
-// check interface compatibility
+// check interface compatibility.
 var _ persist.WatcherEx = &Watcher{}
 
-// Errors
+// Errors.
 var (
 	ErrNotConnected = errors.New("pubsub not connected, cannot dispatch update message")
 )
 
 // Watcher implements Casbin updates watcher to synchronize policy changes
-// between the nodes
+// between the nodes.
 type Watcher struct {
 	url          string               // the pubsub url
 	callbackFunc func(string)         // the update callback function that the watcher will call
@@ -36,7 +36,7 @@ type Watcher struct {
 	opt          Option               // the watcher option
 }
 
-// UpdateType is the type of update
+// UpdateType is the type of update.
 type UpdateType string
 
 const (
@@ -51,7 +51,7 @@ const (
 	UpdateForUpdatePolicies       UpdateType = "UpdateForUpdatePolicies"       // UpdateForUpdatePolicies is the update type for UpdatePolicies
 )
 
-// MSG is the payload for the pubsub message
+// MSG is the payload for the pubsub message.
 type MSG struct {
 	Method      UpdateType `json:"method"`                 // the update method
 	ID          string     `json:"id"`                     // the unique ID of the watcher instance
@@ -164,7 +164,7 @@ func (w *Watcher) SetUpdateCallback(callbackFunc func(string)) error {
 	return nil
 }
 
-// initializeConnections initializes the pubsub connections
+// initializeConnections initializes the pubsub connections.
 func (w *Watcher) initializeConnections(ctx context.Context) error {
 	w.connMu.Lock()
 	defer w.connMu.Unlock()
@@ -178,7 +178,7 @@ func (w *Watcher) initializeConnections(ctx context.Context) error {
 	return w.subscribeToUpdates(ctx)
 }
 
-// subscribeToUpdates subscribes to the topic to receive updates
+// subscribeToUpdates subscribes to the topic to receive updates.
 func (w *Watcher) subscribeToUpdates(ctx context.Context) error {
 	sub, err := pubsub.OpenSubscription(ctx, w.url)
 	if err != nil {
@@ -204,7 +204,7 @@ func (w *Watcher) subscribeToUpdates(ctx context.Context) error {
 	return nil
 }
 
-// executeCallback executes the callback function
+// executeCallback executes the callback function.
 func (w *Watcher) executeCallback(msg *pubsub.Message) {
 	w.connMu.RLock()
 	defer w.connMu.RUnlock()
@@ -273,7 +273,7 @@ func (w *Watcher) UpdateForRemoveFilteredPolicy(sec string, ptype string, fieldI
 }
 
 // UpdateForSavePolicy calls the update callback of other instances to
-// synchronize their policy. It is called after Enforcer.SavePolicy()
+// synchronize their policy. It is called after Enforcer.SavePolicy().
 func (w *Watcher) UpdateForSavePolicy(model model.Model) error {
 	return w.notifyMessage(&MSG{
 		Method: UpdateForSavePolicy,
@@ -286,7 +286,6 @@ func (w *Watcher) UpdateForSavePolicy(model model.Model) error {
 // Enforcer.AddNamedPolicies(), Enforcer.AddGroupingPolicies() and
 // Enforcer.AddNamedGroupingPolicies().
 func (w *Watcher) UpdateForAddPolicies(sec string, ptype string, rules ...[]string) error {
-
 	return w.notifyMessage(&MSG{
 		Method:   UpdateForAddPolicies,
 		ID:       w.GetLocalID(),
@@ -311,7 +310,7 @@ func (w *Watcher) UpdateForRemovePolicies(sec string, ptype string, rules ...[]s
 }
 
 // UpdateForUpdatePolicy calls the update callback of other instances to synchronize their policy.
-// It is called after Enforcer.UpdatePolicy()
+// It is called after Enforcer.UpdatePolicy().
 func (w *Watcher) UpdateForUpdatePolicy(sec string, ptype string, oldRule, newRule []string) error {
 	return w.notifyMessage(&MSG{
 		Method:   UpdateForUpdatePolicy,
@@ -324,7 +323,7 @@ func (w *Watcher) UpdateForUpdatePolicy(sec string, ptype string, oldRule, newRu
 }
 
 // UpdateForUpdatePolicies calls the update callback of other instances to synchronize their policy.
-// It is called after Enforcer.UpdatePolicies()
+// It is called after Enforcer.UpdatePolicies().
 func (w *Watcher) UpdateForUpdatePolicies(sec string, ptype string, oldRules, newRules [][]string) error {
 	return w.notifyMessage(&MSG{
 		Method:   UpdateForUpdatePolicies,
@@ -365,9 +364,8 @@ func finalizer(w *Watcher) {
 //   - msg: the message to send
 //
 // Returns:
-// - error: the error if the message cannot be sent
+// - error: the error if the message cannot be sent.
 func (w *Watcher) notifyMessage(msg *MSG) error {
-
 	msgBody, err := msg.MarshalBinary()
 	if err != nil {
 		return err
