@@ -473,7 +473,10 @@ func TestWatcherWithDefaultCallback(t *testing.T) {
 	w1.Close()
 	w2.Close()
 
-	policies := e1.GetFilteredPolicy(0, "foo")
+	policies, err := e1.GetFilteredPolicy(0, "foo")
+	if err != nil {
+		t.Fatalf("failed to get policy: %v", err)
+	}
 	if len(policies) == 1 && policies[0][0] == "foo" && policies[0][1] == "data1" && policies[0][2] == "read" {
 		return
 	}
