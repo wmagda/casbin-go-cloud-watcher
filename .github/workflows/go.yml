@@ -10,42 +10,51 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    env:
+      COVERPROFILE: ./profile.cov
     strategy:
       fail-fast: false
       matrix:
-        go-version: ['1.21.x','1.22.x']
-        
-    services:
-      nats:
-        image: nats:latest
-        ports:
-          - 4222:4222
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        go-version: [1.21.x, 1.22.x]
+        # Run coverage only on Ubuntu with Go 1.22.x
+        include:
+          - os: ubuntu-latest
+            go-version: 1.22.x
+            coverage: true
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: ${{ matrix.go-version }}
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
 
-    - name: Run Tests
-      run: go test -v -coverprofile=./profile.cov ./...
+      - name: Build
+        shell: bash
+        run: make build
 
-    - name: Coveralls
-      uses: shogo82148/actions-goveralls@v1
-      with:
-        path-to-profile: ./profile.cov
+      - name: Run Tests
+        shell: bash
+        run: make test
+
+      - name: Run Coverage
+        if: ${{ matrix.coverage }}
+        uses: shogo82148/actions-goveralls@v1
+        with:
+          path-to-profile: ${{ env.COVERPROFILE }}
 
   semantic-release:
+    name: Semantic Release
     needs: [build]
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     permissions: 
       contents: write
       issues: write
     steps:
       - uses: actions/checkout@v4
       - name: Run semantic-release
-        if: github.repository == 'bartventer/casbin-go-cloud-watcher' && github.event_name == 'push'
         run: |
           yarn global add semantic-release@17
           semantic-release
