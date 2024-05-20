@@ -1,31 +1,18 @@
 {
     "name": "Go Cloud Watcher",
-    "dockerComposeFile": [
-        "docker-compose.yml"
-    ],
-    "service": "app",
-    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "GitHub.copilot",
-                "GitHub.copilot-chat",
-                "golang.go",
-                "github.vscode-github-actions"
-            ]
+    "image": "ghcr.io/bartventer/devcontainer-images/base-archlinux:latest",
+    "features": {
+        "ghcr.io/bartventer/devcontainer-features/docker-in-docker:latest": {},
+        "ghcr.io/bartventer/arch-devcontainer-features/go:latest": {
+            "golangciLintVersion": "v1.58.2"
         }
     },
-    "features": {
-        "ghcr.io/devcontainers/features/common-utils:2": {
-            "installZsh": true,
-            "configureZshAsDefaultShell": true,
-            "installOhMyZsh": true,
-            "installOhMyZshConfig": true,
-            "upgradePackages": true
-        },
-        "ghcr.io/devcontainers-contrib/features/zsh-plugins:0": {
-            "plugins": "zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search",
-            "omzPlugins": "https://github.com/zsh-users/zsh-autosuggestions.git https://github.com/zsh-users/zsh-syntax-highlighting.git https://github.com/zsh-users/zsh-history-substring-search.git"
-        }
-    }
+    "forwardPorts": [
+        8080
+    ],
+    "mounts": [
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+        "source=${localEnv:HOME}/.vscode-server,target=/home/vscode/.vscode-server-insiders/extensions,type=bind,consistency=cached"
+    ],
+    "remoteUser": "vscode"
 }
