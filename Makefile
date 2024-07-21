@@ -4,6 +4,7 @@ SHELL = /bin/bash
 # Arguments
 TMPDIR ?= ./tmp
 COVERPROFILE ?= coverage.out
+RELEASE_DRYRUN ?=
 
 # Commands
 GO := go
@@ -14,6 +15,10 @@ GOCLEAN := $(GO) clean
 # Flags
 GOTEST_FLAGS := -v -coverprofile=$(COVERPROFILE)
 GOBUILD_FLAGS :=
+RELEASEFLAGS :=
+ifneq ($(RELEASE_DRYRUN),)
+	RELEASEFLAGS += --dry-run
+endif
 
 .PHONY: test
 test:
@@ -32,3 +37,13 @@ clean:
 .PHONY: lint
 lint:
 	golangci-lint run --fix --verbose
+
+.PHONE: update
+update:
+	$(GO) mod tidy
+	$(GO) get -u
+
+.PHONY: release
+release:
+	yarn install
+	yarn run semantic-release $(RELEASEFLAGS)
