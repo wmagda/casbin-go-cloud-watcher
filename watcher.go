@@ -25,8 +25,8 @@ import (
 
 var _ persist.WatcherEx = &Watcher{}
 
-// Errors.
 var (
+	// ErrNotConnected is the error returned when the watcher is not connected.
 	ErrNotConnected = errors.New("pubsub not connected, cannot dispatch update message")
 )
 
