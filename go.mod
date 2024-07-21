@@ -2,6 +2,8 @@ module github.com/bartventer/casbin-go-cloud-watcher
 
 go 1.21
 
+toolchain go1.22.5
+
 require (
 	github.com/casbin/casbin/v2 v2.98.0
 	github.com/google/uuid v1.6.0
