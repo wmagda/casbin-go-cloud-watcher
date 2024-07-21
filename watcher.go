@@ -1,3 +1,10 @@
+/*
+Package watcher provides an implementation of [persist.WatcherEx], supporting
+various pub/sub systems by leveraging the gocloud [pubsub] package.
+
+For more details about the pub/sub systems supported by gocloud, please refer to
+https://gocloud.dev/howto/pubsub/.
+*/
 package watcher
 
 import (
@@ -16,7 +23,6 @@ import (
 	"gocloud.dev/pubsub"
 )
 
-// check interface compatibility.
 var _ persist.WatcherEx = &Watcher{}
 
 // Errors.
@@ -39,28 +45,30 @@ type Watcher struct {
 // UpdateType is the type of update.
 type UpdateType string
 
+// Defines the update types.
 const (
-	Update                        UpdateType = "Update"                        // Update is the default update type
-	UpdateForAddPolicy            UpdateType = "UpdateForAddPolicy"            // UpdateForAddPolicy is the update type for AddPolicy
-	UpdateForRemovePolicy         UpdateType = "UpdateForRemovePolicy"         // UpdateForRemovePolicy is the update type for RemovePolicy
-	UpdateForRemoveFilteredPolicy UpdateType = "UpdateForRemoveFilteredPolicy" // UpdateForRemoveFilteredPolicy is the update type for RemoveFilteredPolicy
-	UpdateForSavePolicy           UpdateType = "UpdateForSavePolicy"           // UpdateForSavePolicy is the update type for SavePolicy
-	UpdateForAddPolicies          UpdateType = "UpdateForAddPolicies"          // UpdateForAddPolicies is the update type for AddPolicies
-	UpdateForRemovePolicies       UpdateType = "UpdateForRemovePolicies"       // UpdateForRemovePolicies is the update type for RemovePolicies
-	UpdateForUpdatePolicy         UpdateType = "UpdateForUpdatePolicy"         // UpdateForUpdatePolicy is the update type for UpdatePolicy
-	UpdateForUpdatePolicies       UpdateType = "UpdateForUpdatePolicies"       // UpdateForUpdatePolicies is the update type for UpdatePolicies
+	Update                        UpdateType = "Update"
+	UpdateForAddPolicy            UpdateType = "UpdateForAddPolicy"
+	UpdateForRemovePolicy         UpdateType = "UpdateForRemovePolicy"
+	UpdateForRemoveFilteredPolicy UpdateType = "UpdateForRemoveFilteredPolicy"
+	UpdateForSavePolicy           UpdateType = "UpdateForSavePolicy"
+	UpdateForAddPolicies          UpdateType = "UpdateForAddPolicies"
+	UpdateForRemovePolicies       UpdateType = "UpdateForRemovePolicies"
+	UpdateForUpdatePolicy         UpdateType = "UpdateForUpdatePolicy"
+	UpdateForUpdatePolicies       UpdateType = "UpdateForUpdatePolicies"
 )
 
-// MSG is the payload for the pubsub message.
+// MSG represents the payload for a pub/sub message, detailing the type of update
+// and the specifics of the policy change.
 type MSG struct {
-	Method      UpdateType `json:"method"`                 // the update method
-	ID          string     `json:"id"`                     // the unique ID of the watcher instance
-	Sec         string     `json:"sec,omitempty"`          // the section of the policy
-	Ptype       string     `json:"ptype,omitempty"`        // the policy type
-	OldRules    [][]string `json:"old_rules,omitempty"`    // the old rules
-	NewRules    [][]string `json:"new_rules,omitempty"`    // the new rules
-	FieldIndex  int        `json:"field_index,omitempty"`  // the field index
-	FieldValues []string   `json:"field_values,omitempty"` // the field values
+	Method      UpdateType `json:"method"`                 // Type of update.
+	ID          string     `json:"id"`                     // Unique ID of the watcher instance.
+	Sec         string     `json:"sec,omitempty"`          // Section of the policy being updated.
+	Ptype       string     `json:"ptype,omitempty"`        // Type of policy being updated.
+	OldRules    [][]string `json:"old_rules,omitempty"`    // Previous state of the policy rules.
+	NewRules    [][]string `json:"new_rules,omitempty"`    // New state of the policy rules.
+	FieldIndex  int        `json:"field_index,omitempty"`  // Index of the field being updated.
+	FieldValues []string   `json:"field_values,omitempty"` // Values of the field being updated.
 }
 
 // MarshalBinary implements the encoding.BinaryMarshaler interface.
