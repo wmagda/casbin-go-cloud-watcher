@@ -1,7 +1,7 @@
 {
   "name": "casbin-go-cloud-watcher",
-  "repository": "git@github.com:bartventer/casbin-go-cloud-watcher.git",
-  "author": "Bart Venter <bartventer@outlook.com>",
+  "repository": "git@github.com:wmagda/casbin-go-cloud-watcher.git",
+  "author": "Wojciech Magda <wojciech.magda@gmail.com>",
   "license": "MIT",
   "engines": {
     "node": ">=22.5.1"

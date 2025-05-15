@@ -1,16 +1,16 @@
 # Casbin Go Cloud Development kit based WatcherEX
-[![Go Reference](https://pkg.go.dev/badge/github.com/bartventer/casbin-go-cloud-watcher.svg)](https://pkg.go.dev/github.com/bartventer/casbin-go-cloud-watcher)
-[![Go Report Card](https://goreportcard.com/badge/github.com/bartventer/casbin-go-cloud-watcher)](https://goreportcard.com/report/github.com/bartventer/casbin-go-cloud-watcher)
-[![Coverage Status](https://coveralls.io/repos/github/bartventer/casbin-go-cloud-watcher/badge.svg?branch=master)](https://coveralls.io/github/bartventer/casbin-go-cloud-watcher?branch=master)
-[![Build](https://github.com/bartventer/casbin-go-cloud-watcher/actions/workflows/go.yml/badge.svg)](https://github.com/bartventer/casbin-go-cloud-watcher/actions/workflows/go.yml)
-[![Release](https://img.shields.io/github/release/bartventer/casbin-go-cloud-watcher.svg)](https://github.com/bartventer/casbin-go-cloud-watcher/releases/latest)
+[![Go Reference](https://pkg.go.dev/badge/github.com/wmagda/casbin-go-cloud-watcher.svg)](https://pkg.go.dev/github.com/wmagda/casbin-go-cloud-watcher)
+[![Go Report Card](https://goreportcard.com/badge/github.com/wmagda/casbin-go-cloud-watcher)](https://goreportcard.com/report/github.com/wmagda/casbin-go-cloud-watcher)
+[![Coverage Status](https://coveralls.io/repos/github/wmagda/casbin-go-cloud-watcher/badge.svg?branch=master)](https://coveralls.io/github/wmagda/casbin-go-cloud-watcher?branch=master)
+[![Build](https://github.com/wmagda/casbin-go-cloud-watcher/actions/workflows/go.yml/badge.svg)](https://github.com/wmagda/casbin-go-cloud-watcher/actions/workflows/go.yml)
+[![Release](https://img.shields.io/github/release/wmagda/casbin-go-cloud-watcher.svg)](https://github.com/wmagda/casbin-go-cloud-watcher/releases/latest)
 
 [Casbin](https://github.com/casbin/casbin) WatcherEX built on top of [gocloud.dev](https://gocloud.dev/).
 
 ## Installation
 
 ```
-go get github.com/bartventer/casbin-go-cloud-watcher
+go get github.com/wmagda/casbin-go-cloud-watcher
 ```
 
 ## Usage
@@ -45,9 +45,9 @@ You can view provider configuration examples here: https://github.com/google/go-
 
 ```go
 import (
-    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/wmagda/casbin-go-cloud-watcher"
     // Enable NATS driver
-    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/natspubsub"
+    _ "github.com/wmagda/casbin-go-cloud-watcher/drivers/natspubsub"
     
     "github.com/casbin/casbin/v2"
 )
@@ -73,9 +73,9 @@ func main() {
 
 ```go
 import (
-    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/wmagda/casbin-go-cloud-watcher"
     // Enable in-memory driver
-    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/mempubsub"
+    _ "github.com/wmagda/casbin-go-cloud-watcher/drivers/mempubsub"
     
     "github.com/casbin/casbin/v2"
 )
@@ -132,9 +132,9 @@ Watcher will create a default AWS Session with the *SharedConfigEnable* option e
 
 ```go
 import (
-    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/wmagda/casbin-go-cloud-watcher"
     // Enable AWS SQS & SNS driver
-    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/awssnssqs"
+    _ "github.com/wmagda/casbin-go-cloud-watcher/drivers/awssnssqs"
 
 
     "github.com/casbin/casbin/v2"
@@ -164,9 +164,9 @@ Watcher can publish to an [Amazon Simple Queue Service](https://aws.amazon.com/s
 
 ```go
 import (
-    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"/
+    cloudwatcher "github.com/wmagda/casbin-go-cloud-watcher"/
     // Enable AWS SQS & SNS driver
-    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/awssnssqs"
+    _ "github.com/wmagda/casbin-go-cloud-watcher/drivers/awssnssqs"
     "github.com/casbin/casbin/v2"
 )
 
@@ -193,9 +193,9 @@ Watcher can publish to an [Azure Service Bus](https://azure.microsoft.com/en-us/
 
 ```go
 import (
-    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/wmagda/casbin-go-cloud-watcher"
     // Enable Azure Service Bus driver
-    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/azuresb"
+    _ "github.com/wmagda/casbin-go-cloud-watcher/drivers/azuresb"
 
     "github.com/casbin/casbin/v2"
 )
@@ -225,9 +225,9 @@ Watcher can publish to a [Kafka](https://kafka.apache.org/) cluster. A Kafka URL
 
 ```go
 import (
-    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/wmagda/casbin-go-cloud-watcher"
     // Enable Kafka driver
-    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/kafkapubsub"
+    _ "github.com/wmagda/casbin-go-cloud-watcher/drivers/kafkapubsub"
 
     "github.com/casbin/casbin/v2"
 )
