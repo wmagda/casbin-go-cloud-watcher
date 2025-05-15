@@ -17,6 +17,18 @@ go get github.com/bartventer/casbin-go-cloud-watcher
 
 Configuration is slightly different for each provider as it needs to get different settings from environment. You can read more about URLs and configuration here: https://gocloud.dev/concepts/urls/.
 
+**Note:** As of v1.15.0, you can now specify both a topic URL and a subscription URL for providers (like GCP Pub/Sub) that require them to be different:
+
+```go
+watcher, _ := cloudwatcher.New(ctx, topicURL, subscriptionURL)
+```
+
+For most providers, you can continue to use the old single-URL style:
+
+```go
+watcher, _ := cloudwatcher.New(ctx, url)
+```
+
 Supported providers:
 - [NATS](https://nats.io/)
 - [GCP Cloud Pub/Sub](https://cloud.google.com/pubsub/)
@@ -84,13 +96,13 @@ func main() {
 
 ### GCP Cloud Pub/Sub
 
-URLs are `gcppubsub://projects/myproject/topics/mytopic`. The URLs use the project ID and the topic ID. See [Application Default Credentials](https://cloud.google.com/docs/authentication/production) to learn about authentication alternatives, including using environment variables.
+URLs are `gcppubsub://projects/myproject/topics/mytopic` for the topic and `gcppubsub://projects/myproject/subscriptions/mysub` for the subscription. The URLs use the project ID and the topic/subscription ID. See [Application Default Credentials](https://cloud.google.com/docs/authentication/production) to learn about authentication alternatives, including using environment variables.
 
 ```go
 import (
-    cloudwatcher "github.com/bartventer/casbin-go-cloud-watcher"
+    cloudwatcher "github.com/wmagda/casbin-go-cloud-watcher"
     // Enable in GCP pubsub driver
-    _ "github.com/bartventer/casbin-go-cloud-watcher/drivers/gcppubsub"
+    _ "github.com/wmagda/casbin-go-cloud-watcher/drivers/gcppubsub"
 
     "github.com/casbin/casbin/v2"
 )
@@ -99,7 +111,9 @@ func main() {
     ctx, cancel := context.WithCancel(context.Background())
     defer cancel()
 
-    watcher, _ := cloudwatcher.New(ctx, "gcppubsub://projects/myproject/topics/mytopic")
+    topicURL := "gcppubsub://projects/myproject/topics/mytopic"
+    subscriptionURL := "gcppubsub://projects/myproject/subscriptions/mysub"
+    watcher, _ := cloudwatcher.New(ctx, topicURL, subscriptionURL)
 
     enforcer := casbin.NewSyncedEnforcer("model.conf", "policy.csv")
     enforcer.SetWatcher(watcher)

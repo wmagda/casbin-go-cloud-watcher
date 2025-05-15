@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
-	_ "github.com/bartventer/casbin-go-cloud-watcher/drivers/mempubsub"
-	_ "github.com/bartventer/casbin-go-cloud-watcher/drivers/natspubsub"
 	"github.com/casbin/casbin/v2"
 	gnatsd "github.com/nats-io/nats-server/v2/test"
 	"github.com/nats-io/nats.go"
+	_ "github.com/wmagda/casbin-go-cloud-watcher/drivers/mempubsub"
+	_ "github.com/wmagda/casbin-go-cloud-watcher/drivers/natspubsub"
 )
 
 func TestNATSWatcher(t *testing.T) {
@@ -32,7 +32,7 @@ func TestNATSWatcher(t *testing.T) {
 
 	// updater represents the Casbin enforcer instance that changes the policy in DB
 	// Use the endpoint of nats as parameter.
-	updater, err := New(ctx, natsSubject)
+	updater, err := New(ctx, natsSubject, natsSubject)
 	if err != nil {
 		t.Fatalf("Failed to create updater, error: %s", err)
 	}
@@ -42,7 +42,7 @@ func TestNATSWatcher(t *testing.T) {
 	})
 
 	// listener represents any other Casbin enforcer instance that watches the change of policy in DB
-	listener, err := New(ctx, natsSubject)
+	listener, err := New(ctx, natsSubject, natsSubject)
 	if err != nil {
 		t.Fatalf("Failed to create second listener: %s", err)
 	}
@@ -104,7 +104,7 @@ func TestWithEnforcerNATS(t *testing.T) {
 	// gocloud.dev connects to NATS server based on env variable
 	t.Setenv("NATS_SERVER_URL", natsEndpoint)
 
-	w, err := New(ctx, natsSubject)
+	w, err := New(ctx, natsSubject, natsSubject)
 	if err != nil {
 		t.Fatalf("Failed to create updater, error: %s", err)
 	}
@@ -146,7 +146,7 @@ func TestWithEnforcerMemory(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	w, err := New(ctx, endpointURL)
+	w, err := New(ctx, endpointURL, endpointURL)
 	if err != nil {
 		t.Fatalf("Failed to create updater, error: %s", err)
 	}
@@ -190,7 +190,7 @@ func TestWithEnforcerMemoryB(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	w, err := New(ctx, endpointURL)
+	w, err := New(ctx, endpointURL, endpointURL)
 	if err != nil {
 		t.Fatalf("Failed to create updater, error: %s", err)
 	}
@@ -225,7 +225,7 @@ func TestWithEnforcerMemoryB(t *testing.T) {
 }
 
 func initWithOption(t *testing.T, opt Option) (*Watcher, *casbin.Enforcer) {
-	w, err := NewWithOption(context.Background(), "mem://topicA", opt)
+	w, err := NewWithOption(context.Background(), "mem://topicA", "mem://topicA", opt)
 	if err != nil {
 		t.Fatalf("failed to new watcher: %v", err)
 	}

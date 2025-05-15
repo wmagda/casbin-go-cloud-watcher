@@ -1,6 +1,6 @@
-module github.com/bartventer/casbin-go-cloud-watcher
+module github.com/wmagda/casbin-go-cloud-watcher
 
-go 1.21
+go 1.22
 
 toolchain go1.22.5
 

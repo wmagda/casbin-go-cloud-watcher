@@ -33,13 +33,14 @@ var (
 // Watcher implements Casbin updates watcher to synchronize policy changes
 // between the nodes.
 type Watcher struct {
-	url          string               // the pubsub url
-	callbackFunc func(string)         // the update callback function that the watcher will call
-	connMu       *sync.RWMutex        // the mutex for pubsub connections
-	ctx          context.Context      // the context for pubsub connections
-	topic        *pubsub.Topic        // the pubsub topic
-	sub          *pubsub.Subscription // the pubsub subscription
-	opt          Option               // the watcher option
+	topicURL        string               // the pubsub topic url
+	subscriptionURL string               // the pubsub subscription url
+	callbackFunc    func(string)         // the update callback function that the watcher will call
+	connMu          *sync.RWMutex        // the mutex for pubsub connections
+	ctx             context.Context      // the context for pubsub connections
+	topic           *pubsub.Topic        // the pubsub topic
+	sub             *pubsub.Subscription // the pubsub subscription
+	opt             Option               // the watcher option
 }
 
 // UpdateType is the type of update.
@@ -130,29 +131,35 @@ func DefaultCallback(e casbin.IEnforcer) func(string) {
 // Parameters:
 //   - ctx: the context for pubsub connections
 //   - url: the pubsub url (e.g. "kafka://my-topic")
+//   - subscriptionURL (optional): the pubsub subscription url (e.g. for GCP Pub/Sub)
 //
 // Returns:
 //   - Watcher: the new watcher instance
 //   - error: the error if the watcher cannot be created
-func New(ctx context.Context, url string) (*Watcher, error) {
-	return NewWithOption(ctx, url, Option{})
+func New(ctx context.Context, url string, subscriptionURL ...string) (*Watcher, error) {
+	if len(subscriptionURL) > 0 {
+		return NewWithOption(ctx, url, subscriptionURL[0], Option{})
+	}
+	return NewWithOption(ctx, url, url, Option{})
 }
 
 // NewWithOption creates a new watcher with the option
 //
 // Parameters:
 //   - ctx: the context for pubsub connections
-//   - url: the pubsub url (e.g. "kafka://my-topic")
+//   - topicURL: the pubsub topic url (e.g. "kafka://my-topic")
+//   - subscriptionURL: the pubsub subscription url (e.g. for GCP Pub/Sub)
 //   - opt: the watcher option
 //
 // Returns:
 //   - Watcher: the new watcher instance
 //   - error: the error if the watcher cannot be created
-func NewWithOption(ctx context.Context, url string, opt Option) (*Watcher, error) {
+func NewWithOption(ctx context.Context, topicURL string, subscriptionURL string, opt Option) (*Watcher, error) {
 	w := &Watcher{
-		url:    url,
-		connMu: &sync.RWMutex{},
-		opt:    opt,
+		topicURL:        topicURL,
+		subscriptionURL: subscriptionURL,
+		connMu:          &sync.RWMutex{},
+		opt:             opt,
 	}
 
 	runtime.SetFinalizer(w, finalizer)
@@ -177,7 +184,7 @@ func (w *Watcher) initializeConnections(ctx context.Context) error {
 	w.connMu.Lock()
 	defer w.connMu.Unlock()
 	w.ctx = ctx
-	topic, err := pubsub.OpenTopic(ctx, w.url)
+	topic, err := pubsub.OpenTopic(ctx, w.topicURL)
 	if err != nil {
 		return err
 	}
@@ -188,7 +195,7 @@ func (w *Watcher) initializeConnections(ctx context.Context) error {
 
 // subscribeToUpdates subscribes to the topic to receive updates.
 func (w *Watcher) subscribeToUpdates(ctx context.Context) error {
-	sub, err := pubsub.OpenSubscription(ctx, w.url)
+	sub, err := pubsub.OpenSubscription(ctx, w.subscriptionURL)
 	if err != nil {
 		return fmt.Errorf("failed to open updates subscription, error: %w", err)
 	}
